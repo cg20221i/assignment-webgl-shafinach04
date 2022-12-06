@@ -318,6 +318,49 @@ const indicesA = [
 
 ];
 
+const cube = [
+  1, 1, 1,     1, 0, 0,     // Index:  0    kanan atas depan
+  1, -1, 1,     1, 0, 0,       // Index:  1
+  -1, -1, 1,     1, 0, 0,    // Index:  2
+  -1,  1, 1,     1, 0, 0,     // Index:  3
+
+  1, 1,  -1,     1, 1, 0,       // Index:  4 kanan atas belakang
+  1, -1,  -1,     1, 1, 0,      // Index:  5
+  -1, -1, -1,     1, 1, 0,    // Index:  6
+  -1,  1,  -1,     1, 1, 0,     // Index:  7
+
+  // -1, -1, -1,     0, 1, 0,      // Index:  8
+  // -1,  1, -1,     0, 1, 0,      // Index:  9
+  // -1,  1,  -1,     0, 1, 0,      // Index: 10
+  // -1, -1,  -1,     0, 1, 0,       // Index: 11
+
+  // 1, -1, -1,     0, 0, 1,       // Index: 12
+  // 1,  1, -1,     0, 0, 1,       // Index: 13
+  // 1,  1,  -1,     0, 0, 1,       // Index: 14
+  // 1, -1,  -1,     0, 0, 1,      // Index: 15
+
+  // // -1, -1, -1,     1, 0.5, 0,  0, -1, 0,   // Index: 16
+  // // -1, -1,  -1,     1, 0.5, 0,  0, -1, 0,   // Index: 17
+  // // 1, -1,  -1,     1, 0.5, 0,  0, -1, 0,   // Index: 18
+  // // 1, -1, -1,     1, 0.5, 0,  0, -1, 0,   // Index: 19
+
+  // // -1,  1, -1,     1, 1, 1,    0, 1, 0,    // Index: 20
+  // // -1,  1, -1,     1, 1, 1,    0, 1, 0,    // Index: 21
+  // // 1,  1,  -1,     1, 1, 1,    0, 1, 0,    // Index: 22
+  // // 1,  1, -1,     1, 1, 1,    0, 1, 0     // Index: 23
+];
+
+const indicesCube = [
+  0, 1, 2,     0, 2, 3,     
+  4, 5, 6,     4, 6, 7, 
+  
+  0,3,4,       3,4,7, 
+  1,2,5,       2,5,6,
+  
+  3,6,7,       
+  
+];
+
 const objects = [
     {
       vertices: vertices2,
@@ -343,6 +386,12 @@ const objects = [
       length: indicesA.length,
       type: gl.TRIANGLES,
     },
+    {
+      vertices: cube,
+      indices: indicesCube,
+      length: indicesCube.length,
+      type: gl.TRIANGLES
+    }
   ]
 
 const vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -518,6 +567,28 @@ const animate2 = () =>{
 
     draw(objects[3].vertices, objects[3].indices, 0, objects[3].length, objects[3].type);
   }
+
+  const animatecube = () =>{
+    var model = glMatrix.mat4.create();
+
+    glMatrix.mat4.rotateX(
+      model, model, rotateX
+    );
+
+    glMatrix.mat4.rotateY(
+      model, model, rotateY
+    );
+
+    var mWorld = gl.getUniformLocation(program, "mWorld");
+    var mView = gl.getUniformLocation(program, "mView");
+    var mProj = gl.getUniformLocation(program, "mProj");
+
+    gl.uniformMatrix4fv(mWorld,false, model);
+    gl.uniformMatrix4fv(mView, false, view);
+    gl.uniformMatrix4fv(mProj, false, perspective);
+
+    draw(objects[4].vertices, objects[4].indices, 0, objects[4].length, objects[4].type);
+  }
   
   function onKeydown(event) {
     if (event.keyCode == 65 || event.keyCode == 37) { // a / arrow kiri
@@ -542,6 +613,7 @@ const animate2 = () =>{
     animate9();
     animateS();
     animateA();
+    animatecube();
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
